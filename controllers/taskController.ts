@@ -19,15 +19,52 @@ export const createTask = catchAsync(async (req: Request, res: Response) => {
 });
 
 export const getAllTasks = catchAsync(async (req: Request, res: Response) => {
-  const id = req.user._id.toString();
-  // console.log(filter);
-  const filter = { userId: "63bdccabd03f1f5dc2433201" };
-  const allTasks = await Task.findById(filter);
+  const id = req.user._id;
+  const filter = { userId: id };
+  const allTasks = await Task.find(filter);
 
   res.status(201).json({
     status: "success",
     data: {
       tasks: allTasks,
+    },
+  });
+});
+
+export const getTask = catchAsync(async (req: Request, res: Response) => {
+  const id = req.params.id;
+
+  const task = await Task.findById(id);
+
+  res.status(200).json({
+    status: "success",
+    data: {
+      task,
+    },
+  });
+});
+
+export const updateTask = catchAsync(async (req: Request, res: Response) => {
+  const updatedTask = await Task.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+    runValidators: true,
+  });
+
+  res.status(200).json({
+    status: "success",
+    data: {
+      task: updatedTask,
+    },
+  });
+});
+
+export const deleteTask = catchAsync(async (req: Request, res: Response) => {
+  const deletedTask = await Task.findByIdAndDelete(req.params.id);
+
+  res.status(204).json({
+    status: "success",
+    data: {
+      task: deletedTask,
     },
   });
 });
